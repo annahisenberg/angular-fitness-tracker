@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Subscription } from 'rxjs';
-import { take, map } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import { Exercise } from './exercise.model';
@@ -26,18 +26,17 @@ export class TrainingService {
             this.db
                 .collection('availableExercises')
                 .snapshotChanges()
-                .pipe(
-                    map(docArray => {
-                        return docArray.map((doc: any) => {
-                            return {
-                                id: doc.payload.doc.id,
-                                name: doc.payload.doc.data().name,
-                                duration: doc.payload.doc.data().duration,
-                                calories: doc.payload.doc.data().calories
-                            }
-                        })
-                    })
-                )
+                .map(docArray => {
+                    // throw(new Error());
+                    return docArray.map(doc => {
+                        return {
+                            id: doc.payload.doc.id,
+                            name: doc.payload.doc.data().name,
+                            duration: doc.payload.doc.data().duration,
+                            calories: doc.payload.doc.data().calories
+                        };
+                    });
+                })
                 .subscribe(
                     (exercises: Exercise[]) => {
                         this.store.dispatch(new UI.StopLoading());
@@ -89,6 +88,8 @@ export class TrainingService {
                 .collection('finishedExercises')
                 .valueChanges()
                 .subscribe((exercises: Exercise[]) => {
+
+
                     this.store.dispatch(new Training.SetFinishedTrainings(exercises));
                 })
         );
@@ -102,4 +103,3 @@ export class TrainingService {
         this.db.collection('finishedExercises').add(exercise);
     }
 }
-

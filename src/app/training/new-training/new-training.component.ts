@@ -23,7 +23,7 @@ export class NewTrainingComponent implements OnInit {
     private trainingService: TrainingService,
     private uiService: UIService,
     private store: Store<fromTraining.State>
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.isLoading$ = this.store.select(fromRoot.getIsLoading);

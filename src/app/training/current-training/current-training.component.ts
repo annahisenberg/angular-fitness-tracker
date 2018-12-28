@@ -1,11 +1,11 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { Store } from '@ngrx/store';
+import { take } from 'rxjs/operators';
+
 import { StopTrainingComponent } from './stop-training.component';
 import { TrainingService } from '../training.service';
-import { Store } from '@ngrx/store';
 import * as fromTraining from '../training.reducer';
-import { Exercise } from '../exercise.model';
-import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-current-training',
@@ -14,9 +14,13 @@ import { take } from 'rxjs/operators';
 })
 export class CurrentTrainingComponent implements OnInit {
   progress = 0;
-  timer;
+  timer: number;
 
-  constructor(private dialog: MatDialog, private trainingService: TrainingService, private store: Store<fromTraining.State>) { }
+  constructor(
+    private dialog: MatDialog,
+    private trainingService: TrainingService,
+    private store: Store<fromTraining.State>
+  ) {}
 
   ngOnInit() {
     this.startOrResumeTimer();
@@ -31,8 +35,8 @@ export class CurrentTrainingComponent implements OnInit {
           this.trainingService.completeExercise();
           clearInterval(this.timer);
         }
-      }, step)
-    })
+      }, step);
+    });
   }
 
   onStop() {
@@ -49,7 +53,6 @@ export class CurrentTrainingComponent implements OnInit {
       } else {
         this.startOrResumeTimer();
       }
-    })
+    });
   }
-
 }
